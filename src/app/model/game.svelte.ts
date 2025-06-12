@@ -1,10 +1,12 @@
 import z from 'zod';
 import { Round, RoundSchema } from './round.svelte';
 import type { PlayerID } from './types';
+import { nanoid } from 'nanoid';
 
 //
 
 export const GameSchema = z.object({
+	id: z.string(),
 	players: z.array(z.string()),
 	rounds: z.array(RoundSchema),
 	currentRound: RoundSchema.optional(),
@@ -16,6 +18,8 @@ export const GameSchema = z.object({
 type GameStruct = z.infer<typeof GameSchema>;
 
 export class Game implements GameStruct {
+	id = nanoid(21);
+
 	players = $state<string[]>([]);
 	rounds = $state<Round[]>([]);
 	currentRound = $state<Round>();
@@ -75,6 +79,7 @@ export class Game implements GameStruct {
 
 	serialize(): GameStruct {
 		return $state.snapshot({
+			id: this.id,
 			players: this.players,
 			rounds: this.rounds.map((round) => round.serialize()),
 			currentRound: this.currentRound?.serialize(),
@@ -85,9 +90,10 @@ export class Game implements GameStruct {
 	}
 
 	static deserialize(unknown: unknown): Game {
-		const { players, rounds, currentRound, nextDirection, nextPlayerIndex, nextNumberOfCards } =
+		const { id, players, rounds, currentRound, nextDirection, nextPlayerIndex, nextNumberOfCards } =
 			GameSchema.parse(unknown);
 		const game = new Game();
+		game.id = id;
 		game.players = players;
 		game.rounds = rounds.map((round) => Round.deserialize(round));
 		game.currentRound = currentRound ? Round.deserialize(currentRound) : undefined;

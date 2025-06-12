@@ -9,10 +9,13 @@
 	let { state }: Props = $props();
 </script>
 
-<div class="idle-state">
-	<div class="welcome-card">
-		<h1>Welcome to Podrida!</h1>
-		<p>A fun card game for friends and family</p>
+<div class="flex grow items-center justify-center text-center">
+	<div class="welcome-card space-y-8">
+		<div class="flex flex-col items-center">
+			<p>Welcome to</p>
+			<h1 class="-rotate-1 text-6xl font-bold">Podrida!</h1>
+		</div>
+
 		<Button onclick={() => state.startGame()}>Start New Game</Button>
 	</div>
 </div>

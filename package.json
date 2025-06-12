@@ -54,6 +54,8 @@
 	"dependencies": {
 		"@inlang/paraglide-js": "^2.0.0",
 		"effect": "^3.16.5",
+		"lucide-svelte": "^0.514.0",
+		"nanoid": "^5.1.5",
 		"type-fest": "^4.41.0",
 		"zod": "^3.25.63"
 	},

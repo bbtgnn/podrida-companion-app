@@ -12,6 +12,8 @@
 	let { state }: Props = $props();
 </script>
 
+{state.canSubmitResults()}
+
 <div class="round-ended">
 	{#each state.getPlayersOrder() as player}
 		{@const id = `result-${player.id}`}
