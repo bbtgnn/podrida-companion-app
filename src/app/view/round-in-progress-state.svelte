@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { RoundInProgressState } from '../app.svelte.js';
+	import type { RoundInProgressState } from '@app/model';
 
 	interface Props {
 		state: RoundInProgressState;

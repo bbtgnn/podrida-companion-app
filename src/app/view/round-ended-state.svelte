@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Result, type RoundEndedState } from '../app.svelte.js';
+	import { RoundResult, type RoundEndedState } from '@app/model';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -27,11 +27,11 @@
 				}
 			>
 				<div class="flex items-center space-x-2">
-					<RadioGroup.Item value={Result.Success} id={`${id}-success`} />
+					<RadioGroup.Item value={RoundResult.Success} id={`${id}-success`} />
 					<Label for={`${id}-success`}>Success</Label>
 				</div>
 				<div class="flex items-center space-x-2">
-					<RadioGroup.Item value={Result.Failure} id={`${id}-failure`} />
+					<RadioGroup.Item value={RoundResult.Failure} id={`${id}-failure`} />
 					<Label for={`${id}-failure`}>Failure</Label>
 				</div>
 			</RadioGroup.Root>

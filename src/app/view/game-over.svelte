@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { GameOverState } from '../app.svelte.js';
+	import { GameOverState } from '@app/model';
 
 	type Props = {
 		state: GameOverState;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ResultsDisplayState } from '../app.svelte.js';
+	import type { ResultsDisplayState } from '@app/model';
 
 	interface Props {
 		state: ResultsDisplayState;

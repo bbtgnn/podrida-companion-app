@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { GameSetupState } from '../app.svelte.js';
+	import type { GameSetupState } from '@app/model';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
-	import type { IdleState } from '../app.svelte.js';
+	import type { IdleState } from '@app/model';
 
 	interface Props {
 		state: IdleState;

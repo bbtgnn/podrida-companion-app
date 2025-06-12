@@ -1,5 +1,10 @@
 <script lang="ts">
-	import { AppComponent } from '$lib/app';
+	import { app, AppComponent } from '@app/index';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		app.load();
+	});
 </script>
 
-<AppComponent />
+<AppComponent {app} />

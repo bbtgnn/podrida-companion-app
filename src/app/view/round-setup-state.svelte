@@ -2,7 +2,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import Label from '$lib/components/ui/label/label.svelte';
-	import type { RoundSetupState } from '../app.svelte.js';
+	import type { RoundSetupState } from '@app/model';
 
 	interface Props {
 		state: RoundSetupState;
