@@ -12,6 +12,8 @@
 	<div class="results-card">
 		<h1>Results</h1>
 
+		<pre>{JSON.stringify(state.game.getCurrentPlacings(), null, 2)}</pre>
+
 		{#each state.game.getCurrentPlacings() as placement}
 			<div class="placement">
 				<div class="placement-name">{placement.playerName}</div>

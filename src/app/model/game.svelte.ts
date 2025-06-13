@@ -32,12 +32,13 @@ export class Game implements GameStruct {
 		this.players.push(playerName);
 	}
 
-	startRound() {
-		if (this.currentRound) {
-			this.currentRound.isOver = true;
-			this.rounds.push(this.currentRound);
-		}
+	endRound() {
+		if (!this.currentRound) return;
+		this.currentRound.isOver = true;
+		this.rounds.push(this.currentRound);
+	}
 
+	startRound() {
 		this.currentRound = new Round(this.nextNumberOfCards, this.nextPlayerIndex);
 		this.nextPlayerIndex = (this.nextPlayerIndex + 1) % this.players.length;
 

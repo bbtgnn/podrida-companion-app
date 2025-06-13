@@ -37,7 +37,6 @@
 		<IdleStateComponent state={s} />
 	{:else if s instanceof _GameState}
 		<GameHeader state={s} />
-
 		{#if s instanceof GameSetupState}
 			<GameSetupStateComponent state={s} />
 		{:else if s instanceof _RoundState}

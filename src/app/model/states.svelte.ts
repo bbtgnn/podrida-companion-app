@@ -101,7 +101,8 @@ export class RoundEndedState extends _RoundState {
 
 	submitResults() {
 		if (!this.canSubmitResults()) return;
-		else if (this.app.isGameOver()) this.app.nextState(GameOverState);
+		this.game.endRound();
+		if (this.app.isGameOver()) this.app.nextState(GameOverState);
 		else this.app.nextState(ResultsDisplayState);
 	}
 
@@ -116,7 +117,7 @@ export class RoundEndedState extends _RoundState {
 	}
 }
 
-export class ResultsDisplayState extends _RoundState {
+export class ResultsDisplayState extends _GameState {
 	nextRound() {
 		this.game.startRound();
 		this.app.nextState(RoundSetupState);
