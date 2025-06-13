@@ -20,6 +20,7 @@
 	import ResultsDisplayStateComponent from './states/results-display-state.svelte';
 	import GameOverStateComponent from './states/game-over.svelte';
 	import GameHeader from './partials/game-header.svelte';
+	import RoundHeader from './partials/round-header.svelte';
 
 	//
 
@@ -36,17 +37,20 @@
 		<IdleStateComponent state={s} />
 	{:else if s instanceof _GameState}
 		<GameHeader state={s} />
+
 		{#if s instanceof GameSetupState}
 			<GameSetupStateComponent state={s} />
 		{:else if s instanceof _RoundState}
-			<!-- Round header -->
-			{#if s instanceof RoundSetupState}
-				<RoundSetupStateComponent state={s} />
-			{:else if s instanceof RoundInProgressState}
-				<RoundInProgressStateComponent state={s} />
-			{:else if s instanceof RoundEndedState}
-				<RoundEndedStateComponent state={s} />
-			{/if}
+			<RoundHeader state={s} />
+			<div>
+				{#if s instanceof RoundSetupState}
+					<RoundSetupStateComponent state={s} />
+				{:else if s instanceof RoundInProgressState}
+					<RoundInProgressStateComponent state={s} />
+				{:else if s instanceof RoundEndedState}
+					<RoundEndedStateComponent state={s} />
+				{/if}
+			</div>
 		{:else if s instanceof ResultsDisplayState}
 			<ResultsDisplayStateComponent state={s} />
 		{:else if s instanceof GameOverState}

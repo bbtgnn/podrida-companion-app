@@ -15,7 +15,7 @@
 	}
 </script>
 
-<form class="round-setup">
+<form class="space-y-4 p-4">
 	{#each state.getPlayersOrder() as player}
 		<div>
 			<Label for="bet-{player.id}">{player.name}</Label>
@@ -90,6 +90,7 @@
 			state.startRound();
 		}}
 		disabled={!state.canStartRound()}
+		class="w-full"
 	>
 		Start Round
 	</Button>
