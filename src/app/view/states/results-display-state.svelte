@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { Button } from '$lib/components/ui/button';
+	import Label from '$lib/components/ui/label/label.svelte';
+	import { Switch } from '$lib/components/ui/switch';
 	import type { ResultsDisplayState } from '@app/model';
 
 	interface Props {
@@ -12,42 +15,32 @@
 	<div class="results-card">
 		<h1>Results</h1>
 
-		<pre>{JSON.stringify(state.game.getCurrentPlacings(), null, 2)}</pre>
+		<table class="w-full">
+			<tbody>
+				{#each state.game.getCurrentPlacings() as placement, index}
+					<tr>
+						<td>{index + 1}</td>
+						<td>{placement.playerName}</td>
+						<td>{placement.points}</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
 
-		{#each state.game.getCurrentPlacings() as placement}
-			<div class="placement">
-				<div class="placement-name">{placement.playerName}</div>
-				<div class="placement-score">{placement.points}</div>
-			</div>
-		{/each}
-		<!-- 
-		<div class="game-progress">
-			<h3>Game Progress</h3>
-			<div class="progress-info">
-				<p><strong>Next round:</strong> {game.nextNumberOfCards} cards each</p>
-				<p>
-					<strong>Direction:</strong>
-					{game.nextDirection === 'forward' ? '📈 Going up' : '📉 Going down'}
-				</p>
-				{#if shouldEndGame()}
-					<p class="game-ending">🎯 This was the final round!</p>
-				{/if}
-			</div>
-		</div>
-
-		<div class="actions">
-			{#if shouldEndGame()}
-				<button class="end-game-button" onclick={() => state.endGame()}>
-					🏆 End Game - {getWinner()?.name} Wins!
-				</button>
-			{:else}
-				<button class="next-round-button" onclick={() => state.nextRound()}>
-					Continue to Next Round
-				</button>
-				<button class="end-game-button secondary" onclick={() => state.endGame()}>
-					End Game Early
-				</button>
+		{#if !state.isGameOver()}
+			{#if state.canStartReturn()}
+				<pre>{state.game.nextDirection}</pre>
+				<Label>
+					<Switch
+						checked={state.isNextDirectionBackward()}
+						onCheckedChange={() => state.toggleStartReturn()}
+					/>
+					<span>Start return</span>
+				</Label>
 			{/if}
-		</div> -->
+			<Button onclick={() => state.nextRound()}>Next Round</Button>
+		{:else}
+			<Button onclick={() => state.endGame()}>End Game</Button>
+		{/if}
 	</div>
 </div>

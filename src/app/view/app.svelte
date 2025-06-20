@@ -7,7 +7,6 @@
 		RoundInProgressState,
 		RoundEndedState,
 		ResultsDisplayState,
-		GameOverState,
 		_RoundState,
 		_GameState
 	} from '@app/model';
@@ -18,7 +17,6 @@
 	import RoundInProgressStateComponent from './states/round-in-progress-state.svelte';
 	import RoundEndedStateComponent from './states/round-ended-state.svelte';
 	import ResultsDisplayStateComponent from './states/results-display-state.svelte';
-	import GameOverStateComponent from './states/game-over.svelte';
 	import GameHeader from './partials/game-header.svelte';
 	import RoundHeader from './partials/round-header.svelte';
 
@@ -48,12 +46,10 @@
 					<RoundInProgressStateComponent state={s} />
 				{:else if s instanceof RoundEndedState}
 					<RoundEndedStateComponent state={s} />
+				{:else if s instanceof ResultsDisplayState}
+					<ResultsDisplayStateComponent state={s} />
 				{/if}
 			</div>
-		{:else if s instanceof ResultsDisplayState}
-			<ResultsDisplayStateComponent state={s} />
-		{:else if s instanceof GameOverState}
-			<GameOverStateComponent state={s} />
 		{/if}
 	{/if}
 </main>

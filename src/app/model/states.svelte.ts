@@ -56,15 +56,14 @@ export class GameSetupState extends _GameState {
 		this.game.addPlayer(playerName);
 	}
 
+	canStartGame() {
+		return this.game.players.length >= 2;
+	}
+
 	startGame() {
 		if (!this.canStartGame()) return;
 		this.game.startRound();
 		this.app.nextState(RoundSetupState);
-	}
-
-	canStartGame() {
-		const players = this.game.players;
-		return players && players.length >= 2;
 	}
 }
 
@@ -74,13 +73,13 @@ export class RoundSetupState extends _RoundState {
 		this.round.bets[playerIndex] = bet;
 	}
 
+	canStartRound() {
+		return Object.keys(this.round.bets).length === this.game.players.length;
+	}
+
 	startRound() {
 		if (!this.canStartRound()) return;
 		this.app.nextState(RoundInProgressState);
-	}
-
-	canStartRound() {
-		return Object.keys(this.round.bets).length === this.game.players.length;
 	}
 }
 
@@ -99,13 +98,6 @@ export class RoundEndedState extends _RoundState {
 		this.round.results[playerIndex] = result;
 	}
 
-	submitResults() {
-		if (!this.canSubmitResults()) return;
-		this.game.endRound();
-		if (this.app.isGameOver()) this.app.nextState(GameOverState);
-		else this.app.nextState(ResultsDisplayState);
-	}
-
 	canSubmitResults() {
 		const allResults = Object.values(this.round.results);
 
@@ -115,17 +107,45 @@ export class RoundEndedState extends _RoundState {
 
 		return allResultsSubmitted && allResultsAreDefined && atLeastOneHasFailure;
 	}
+
+	submitResults() {
+		if (!this.canSubmitResults()) return;
+		this.app.nextState(ResultsDisplayState);
+	}
 }
 
-export class ResultsDisplayState extends _GameState {
+export class ResultsDisplayState extends _RoundState {
+	// this.game.endRound();
+	// 	if (this.app.isGameOver()) this.app.nextState(GameOverState);
+	// 	else
+
+	canStartReturn() {
+		// TODO - Improve
+		const isIncreasing = this.round.numberOfCards > (this.game.rounds.at(-1)?.numberOfCards ?? 0);
+		return isIncreasing;
+	}
+
+	isNextDirectionBackward() {
+		return this.game.nextDirection === 'backward';
+	}
+
+	toggleStartReturn() {
+		console.log('toggleStartReturn');
+		if (!this.canStartReturn()) return;
+		this.game.nextDirection = this.game.nextDirection === 'forward' ? 'backward' : 'forward';
+	}
+
 	nextRound() {
 		this.game.startRound();
 		this.app.nextState(RoundSetupState);
 	}
-}
 
-export class GameOverState extends _GameState {
+	isGameOver() {
+		return this.game.nextDirection === 'backward' && this.round.numberOfCards === 1;
+	}
+
 	endGame() {
+		this.game.isOver = true;
 		this.app.currentGame = undefined;
 		this.app.nextState(IdleState);
 	}
@@ -139,8 +159,7 @@ export const AppStates = {
 	RoundSetupState,
 	RoundInProgressState,
 	RoundEndedState,
-	ResultsDisplayState,
-	GameOverState
+	ResultsDisplayState
 };
 
 export type AppState =
@@ -149,5 +168,4 @@ export type AppState =
 	| RoundSetupState
 	| RoundInProgressState
 	| RoundEndedState
-	| ResultsDisplayState
-	| GameOverState;
+	| ResultsDisplayState;

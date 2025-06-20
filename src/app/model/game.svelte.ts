@@ -12,21 +12,23 @@ export const GameSchema = z.object({
 	currentRound: RoundSchema.optional(),
 	nextDirection: z.enum(['forward', 'backward']),
 	nextPlayerIndex: z.number(),
-	nextNumberOfCards: z.number()
+	nextNumberOfCards: z.number(),
+	isOver: z.boolean().default(false)
 });
 
 type GameStruct = z.infer<typeof GameSchema>;
 
 export class Game implements GameStruct {
 	id = nanoid(21);
+	isOver = $state(false);
 
 	players = $state<string[]>([]);
 	rounds = $state<Round[]>([]);
 	currentRound = $state<Round>();
 
 	nextDirection = $state<'forward' | 'backward'>('forward');
-	nextPlayerIndex = $state<number>(0);
-	nextNumberOfCards = $state<number>(1);
+	nextPlayerIndex = $state(0);
+	nextNumberOfCards = $state(1);
 
 	addPlayer(playerName: string) {
 		this.players.push(playerName);
@@ -39,20 +41,16 @@ export class Game implements GameStruct {
 	}
 
 	startRound() {
-		this.currentRound = new Round(this.nextNumberOfCards, this.nextPlayerIndex);
-		this.nextPlayerIndex = (this.nextPlayerIndex + 1) % this.players.length;
-
 		if (this.nextDirection === 'forward') {
 			this.nextNumberOfCards++;
 		} else {
 			this.nextNumberOfCards--;
 		}
 
-		return this.currentRound;
-	}
+		this.currentRound = new Round(this.nextNumberOfCards, this.nextPlayerIndex);
+		this.nextPlayerIndex = (this.nextPlayerIndex + 1) % this.players.length;
 
-	startReturn() {
-		this.nextDirection = 'backward';
+		return this.currentRound;
 	}
 
 	getCurrentPlacings() {
@@ -86,13 +84,22 @@ export class Game implements GameStruct {
 			currentRound: this.currentRound?.serialize(),
 			nextDirection: this.nextDirection,
 			nextPlayerIndex: this.nextPlayerIndex,
-			nextNumberOfCards: this.nextNumberOfCards
+			nextNumberOfCards: this.nextNumberOfCards,
+			isOver: this.isOver
 		});
 	}
 
 	static deserialize(unknown: unknown): Game {
-		const { id, players, rounds, currentRound, nextDirection, nextPlayerIndex, nextNumberOfCards } =
-			GameSchema.parse(unknown);
+		const {
+			id,
+			players,
+			rounds,
+			currentRound,
+			nextDirection,
+			nextPlayerIndex,
+			nextNumberOfCards,
+			isOver
+		} = GameSchema.parse(unknown);
 		const game = new Game();
 		game.id = id;
 		game.players = players;
@@ -101,6 +108,7 @@ export class Game implements GameStruct {
 		game.nextDirection = nextDirection;
 		game.nextPlayerIndex = nextPlayerIndex;
 		game.nextNumberOfCards = nextNumberOfCards;
+		game.isOver = isOver;
 		return game;
 	}
 }
