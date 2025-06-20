@@ -56,16 +56,14 @@ export class App {
 	serialize(): AppStruct {
 		return $state.snapshot({
 			currentGame: this.currentGame?.serialize(),
-			currentState: this.currentState?.constructor.name
+			currentState: this.currentState?.getName()
 		});
 	}
 
 	deserialize(unknown: unknown) {
 		const { currentGame, currentState } = AppSchema.parse(unknown);
 		this.currentGame = currentGame ? Game.deserialize(currentGame) : undefined;
-		this.currentState = currentState
-			? new AppStates[currentState as keyof typeof AppStates](this)
-			: new IdleState(this);
+		this.currentState = currentState ? new AppStates[currentState](this) : new IdleState(this);
 	}
 
 	persist() {

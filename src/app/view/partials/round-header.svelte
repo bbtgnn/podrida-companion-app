@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { AppStates, type _RoundState } from '@app/model';
+	import {
+		ResultsDisplayState,
+		RoundEndedState,
+		RoundInProgressState,
+		RoundSetupState,
+		type _RoundState
+	} from '@app/model';
 
 	interface Props {
 		state: _RoundState;
@@ -18,22 +24,22 @@
 	};
 
 	const stateDisplayMap: Record<string, StateDisplay> = {
-		[AppStates.RoundSetupState.name]: {
+		[RoundSetupState.name]: {
 			label: 'Round Setup',
 			bgColor: 'bg-orange-300',
 			borderColor: 'border-orange-400'
 		},
-		[AppStates.RoundInProgressState.name]: {
+		[RoundInProgressState.name]: {
 			label: 'Round In Progress',
 			bgColor: 'bg-blue-300',
 			borderColor: 'border-blue-400'
 		},
-		[AppStates.RoundEndedState.name]: {
+		[RoundEndedState.name]: {
 			label: 'Round Ended',
 			bgColor: 'bg-green-300',
 			borderColor: 'border-green-400'
 		},
-		[AppStates.ResultsDisplayState.name]: {
+		[ResultsDisplayState.name]: {
 			label: 'Results Display',
 			bgColor: 'bg-purple-300',
 			borderColor: 'border-purple-400'

@@ -6,9 +6,14 @@ import { Round, RoundResult } from './round.svelte';
 
 export abstract class _AppState {
 	public readonly app: App;
+	public abstract readonly name: string;
 
 	constructor(app: App) {
 		this.app = app;
+	}
+
+	getName() {
+		return this.name;
 	}
 }
 
@@ -44,6 +49,8 @@ export abstract class _RoundState extends _GameState {
 // Concrete states
 
 export class IdleState extends _AppState {
+	public readonly name = 'idle';
+
 	startGame() {
 		const game = new Game();
 		this.app.currentGame = game;
@@ -52,6 +59,8 @@ export class IdleState extends _AppState {
 }
 
 export class GameSetupState extends _GameState {
+	public readonly name = 'game-setup';
+
 	addPlayer(playerName: string) {
 		this.game.players.push(playerName);
 	}
@@ -72,6 +81,8 @@ export class GameSetupState extends _GameState {
 }
 
 export class RoundSetupState extends _RoundState {
+	public readonly name = 'round-setup';
+
 	addBet(playerIndex: number, bet: number) {
 		// TODO - Add validation for bet, and for last player
 		this.round.bets[playerIndex] = bet;
@@ -88,12 +99,16 @@ export class RoundSetupState extends _RoundState {
 }
 
 export class RoundInProgressState extends _RoundState {
+	public readonly name = 'round-in-progress';
+
 	endRound() {
 		this.app.nextState(RoundEndedState);
 	}
 }
 
 export class RoundEndedState extends _RoundState {
+	public readonly name = 'round-ended';
+
 	getPlayerResult(playerIndex: number) {
 		return this.round.results[playerIndex] ?? null;
 	}
@@ -119,6 +134,8 @@ export class RoundEndedState extends _RoundState {
 }
 
 export class ResultsDisplayState extends _RoundState {
+	public readonly name = 'results-display';
+
 	// this.game.endRound();
 	// 	if (this.app.isGameOver()) this.app.nextState(GameOverState);
 	// 	else
@@ -158,12 +175,12 @@ export class ResultsDisplayState extends _RoundState {
 // Index
 
 export const AppStates = {
-	IdleState,
-	GameSetupState,
-	RoundSetupState,
-	RoundInProgressState,
-	RoundEndedState,
-	ResultsDisplayState
+	[IdleState.name]: IdleState,
+	[GameSetupState.name]: GameSetupState,
+	[RoundSetupState.name]: RoundSetupState,
+	[RoundInProgressState.name]: RoundInProgressState,
+	[RoundEndedState.name]: RoundEndedState,
+	[ResultsDisplayState.name]: ResultsDisplayState
 };
 
 export type AppState =
