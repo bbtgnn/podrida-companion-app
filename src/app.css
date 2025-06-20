@@ -119,3 +119,14 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+html {
+	font-size: 24px;
+}
+
+html,
+body,
+main {
+	height: 100dvh;
+	overflow: hidden;
+}

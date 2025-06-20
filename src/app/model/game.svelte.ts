@@ -30,10 +30,6 @@ export class Game implements GameStruct {
 	nextPlayerIndex = $state(0);
 	nextNumberOfCards = $state(1);
 
-	addPlayer(playerName: string) {
-		this.players.push(playerName);
-	}
-
 	endRound() {
 		if (!this.currentRound) return;
 		this.currentRound.isOver = true;

@@ -1,0 +1,4 @@
+{
+	"tailwindCSS.classFunctions": ["cn"],
+	"tailwindCSS.classAttributes": ["class", "className", "ngClass", "class:list", "containerClass"]
+}

@@ -30,7 +30,7 @@
 	const s = $derived(app.currentState);
 </script>
 
-<main class="flex min-h-screen flex-col">
+<main class="flex flex-col">
 	{#if s instanceof IdleState}
 		<IdleStateComponent state={s} />
 	{:else if s instanceof _GameState}
@@ -39,17 +39,15 @@
 			<GameSetupStateComponent state={s} />
 		{:else if s instanceof _RoundState}
 			<RoundHeader state={s} />
-			<div>
-				{#if s instanceof RoundSetupState}
-					<RoundSetupStateComponent state={s} />
-				{:else if s instanceof RoundInProgressState}
-					<RoundInProgressStateComponent state={s} />
-				{:else if s instanceof RoundEndedState}
-					<RoundEndedStateComponent state={s} />
-				{:else if s instanceof ResultsDisplayState}
-					<ResultsDisplayStateComponent state={s} />
-				{/if}
-			</div>
+			{#if s instanceof RoundSetupState}
+				<RoundSetupStateComponent state={s} />
+			{:else if s instanceof RoundInProgressState}
+				<RoundInProgressStateComponent state={s} />
+			{:else if s instanceof RoundEndedState}
+				<RoundEndedStateComponent state={s} />
+			{:else if s instanceof ResultsDisplayState}
+				<ResultsDisplayStateComponent state={s} />
+			{/if}
 		{/if}
 	{/if}
 </main>

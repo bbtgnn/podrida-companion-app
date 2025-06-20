@@ -53,7 +53,11 @@ export class IdleState extends _AppState {
 
 export class GameSetupState extends _GameState {
 	addPlayer(playerName: string) {
-		this.game.addPlayer(playerName);
+		this.game.players.push(playerName);
+	}
+
+	removePlayer(playerIndex: number) {
+		this.game.players.splice(playerIndex, 1);
 	}
 
 	canStartGame() {
