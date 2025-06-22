@@ -6,15 +6,12 @@ import { Round, RoundResult } from './round.svelte';
 
 export abstract class _AppState {
 	public readonly app: App;
-	public abstract readonly name: string;
 
 	constructor(app: App) {
 		this.app = app;
 	}
 
-	getName() {
-		return this.name;
-	}
+	abstract getType(): string;
 }
 
 export abstract class _GameState extends _AppState {
@@ -49,7 +46,10 @@ export abstract class _RoundState extends _GameState {
 // Concrete states
 
 export class IdleState extends _AppState {
-	public readonly name = 'idle';
+	static readonly id = 'idle';
+	getType() {
+		return IdleState.id;
+	}
 
 	startGame() {
 		const game = new Game();
@@ -59,7 +59,10 @@ export class IdleState extends _AppState {
 }
 
 export class GameSetupState extends _GameState {
-	public readonly name = 'game-setup';
+	static readonly id = 'game-setup';
+	getType() {
+		return GameSetupState.id;
+	}
 
 	addPlayer(playerName: string) {
 		this.game.players.push(playerName);
@@ -81,7 +84,10 @@ export class GameSetupState extends _GameState {
 }
 
 export class RoundSetupState extends _RoundState {
-	public readonly name = 'round-setup';
+	static readonly id = 'round-setup';
+	getType() {
+		return RoundSetupState.id;
+	}
 
 	addBet(playerIndex: number, bet: number) {
 		// TODO - Add validation for bet, and for last player
@@ -99,7 +105,10 @@ export class RoundSetupState extends _RoundState {
 }
 
 export class RoundInProgressState extends _RoundState {
-	public readonly name = 'round-in-progress';
+	static readonly id = 'round-in-progress';
+	getType() {
+		return RoundInProgressState.id;
+	}
 
 	endRound() {
 		this.app.nextState(RoundEndedState);
@@ -107,7 +116,10 @@ export class RoundInProgressState extends _RoundState {
 }
 
 export class RoundEndedState extends _RoundState {
-	public readonly name = 'round-ended';
+	static readonly id = 'round-ended';
+	getType() {
+		return RoundEndedState.id;
+	}
 
 	getPlayerResult(playerIndex: number) {
 		return this.round.results[playerIndex] ?? null;
@@ -134,7 +146,10 @@ export class RoundEndedState extends _RoundState {
 }
 
 export class ResultsDisplayState extends _RoundState {
-	public readonly name = 'results-display';
+	static readonly id = 'results-display';
+	getType() {
+		return ResultsDisplayState.id;
+	}
 
 	// this.game.endRound();
 	// 	if (this.app.isGameOver()) this.app.nextState(GameOverState);
@@ -175,12 +190,12 @@ export class ResultsDisplayState extends _RoundState {
 // Index
 
 export const AppStates = {
-	[IdleState.name]: IdleState,
-	[GameSetupState.name]: GameSetupState,
-	[RoundSetupState.name]: RoundSetupState,
-	[RoundInProgressState.name]: RoundInProgressState,
-	[RoundEndedState.name]: RoundEndedState,
-	[ResultsDisplayState.name]: ResultsDisplayState
+	[IdleState.id]: IdleState,
+	[GameSetupState.id]: GameSetupState,
+	[RoundSetupState.id]: RoundSetupState,
+	[RoundInProgressState.id]: RoundInProgressState,
+	[RoundEndedState.id]: RoundEndedState,
+	[ResultsDisplayState.id]: ResultsDisplayState
 };
 
 export type AppState =

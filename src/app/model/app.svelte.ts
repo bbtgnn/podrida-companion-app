@@ -19,9 +19,6 @@ type AppStruct = z.infer<typeof AppSchema>;
 
 export class App {
 	currentGame = $state<Game>();
-	gameHistory = $state<Game[]>([]);
-
-	history = $state<AppState[]>([]);
 	currentState = $state<AppState>();
 
 	constructor() {
@@ -29,7 +26,6 @@ export class App {
 	}
 
 	nextState(StateConstructor: new (app: App) => AppState) {
-		if (this.currentState) this.history.push(this.currentState);
 		this.currentState = new StateConstructor(this);
 		this.persist();
 	}
@@ -41,11 +37,7 @@ export class App {
 		return (isRoundEnded || isResultsDisplayed) && isNextNumberOfCardsZero;
 	}
 
-	closeGame() {
-		if (this.currentGame) {
-			this.gameHistory.push(this.currentGame);
-			this.currentGame = undefined;
-		}
+	exitGame() {
 		this.currentState = new IdleState(this);
 	}
 
@@ -56,14 +48,20 @@ export class App {
 	serialize(): AppStruct {
 		return $state.snapshot({
 			currentGame: this.currentGame?.serialize(),
-			currentState: this.currentState?.getName()
+			currentState: this.currentState?.getType()
 		});
 	}
 
 	deserialize(unknown: unknown) {
 		const { currentGame, currentState } = AppSchema.parse(unknown);
 		this.currentGame = currentGame ? Game.deserialize(currentGame) : undefined;
-		this.currentState = currentState ? new AppStates[currentState](this) : new IdleState(this);
+		if (!currentState) {
+			this.currentState = new IdleState(this);
+		} else {
+			const StateConstructor = AppStates[currentState as keyof typeof AppStates];
+			if (!StateConstructor) throw new Error(`Unknown state: ${currentState}`);
+			this.currentState = new StateConstructor(this);
+		}
 	}
 
 	persist() {

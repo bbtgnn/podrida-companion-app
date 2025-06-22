@@ -11,7 +11,7 @@
 </script>
 
 <nav class="bg-background flex items-center justify-between border-b p-2 pr-4">
-	<Button variant="outline" onclick={() => state.app.closeGame()}><ArrowLeft /></Button>
+	<!-- <Button variant="outline" onclick={() => state.app.exitGame()}><ArrowLeft /></Button> -->
 	{#if state instanceof GameSetupState}
 		<div class="flex flex-col items-end">
 			<p class="font-bold">Game Setup</p>
