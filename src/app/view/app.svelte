@@ -30,7 +30,7 @@
 	const s = $derived(app.currentState);
 </script>
 
-<main class="flex flex-col">
+<main class="flex touch-manipulation flex-col select-none">
 	{#if s instanceof IdleState}
 		<IdleStateComponent state={s} />
 	{:else if s instanceof _GameState}

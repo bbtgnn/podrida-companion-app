@@ -1,4 +1,4 @@
-import z from 'zod';
+import { z } from 'zod/v4';
 import type { PlayerID } from './types';
 
 //
@@ -9,8 +9,8 @@ export enum RoundResult {
 }
 
 export const RoundSchema = z.object({
-	bets: z.record(z.number()),
-	results: z.record(z.nativeEnum(RoundResult)),
+	bets: z.record(z.string(), z.number()),
+	results: z.record(z.string(), z.enum(RoundResult)),
 	isOver: z.boolean(),
 	numberOfCards: z.number().default(1),
 	firstPlayer: z.number().default(0)

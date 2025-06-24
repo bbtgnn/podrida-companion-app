@@ -13,11 +13,12 @@
 	}
 
 	let { state: setupState }: Props = $props();
+	const game = $derived(setupState.game);
 
 	//
 
 	let newPlayerName = $state('');
-	const players = $derived(setupState.game.players);
+	const players = $derived(game.players);
 
 	let inputRef = $state<HTMLInputElement | null>(null);
 
@@ -34,14 +35,16 @@
 	{#if players.length > 0}
 		<p class="text-sm font-semibold">Players ({players.length})</p>
 		<ul class="space-y-2">
-			{#each players as _, index}
+			{#each players as player (player.id)}
 				<li class="flex items-center gap-2">
 					<Input
 						type="text"
 						placeholder="Enter player name"
-						bind:value={setupState.game.players[index]}
+						bind:value={
+							() => game.getPlayerById(player.id).name, (name) => game.renamePlayer(player.id, name)
+						}
 					/>
-					<Button variant="secondary" size="icon" onclick={() => setupState.removePlayer(index)}>
+					<Button variant="secondary" size="icon" onclick={() => game.removePlayer(player.id)}>
 						<Trash />
 					</Button>
 				</li>

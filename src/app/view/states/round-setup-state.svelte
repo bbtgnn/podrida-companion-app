@@ -4,29 +4,33 @@
 	import Label from '$lib/components/ui/label/label.svelte';
 	import type { RoundSetupState } from '@app/model';
 	import Container from '../partials/container.svelte';
+	import BetInput from '../partials/bet-input.svelte';
+	import PlayersTable from '../partials/players-table.svelte';
 
 	interface Props {
 		state: RoundSetupState;
 	}
 
 	let { state }: Props = $props();
+
+	$effect(() => {
+		state.allPlayersExceptLastHaveBet();
+	});
+
+	$inspect(state.round.bets);
 </script>
 
 <Container>
-	{#each state.getPlayersOrder() as player}
-		<div>
-			<Label for="bet-{player.id}">{player.name}</Label>
-			<div>
-				<Input
-					id="bet-{player.id}"
-					type="number"
-					min="0"
-					max={state.round.numberOfCards}
-					bind:value={state.round.bets[player.id]}
-				/>
-			</div>
-		</div>
-	{/each}
+	<PlayersTable players={state.getPlayersOrder()}>
+		{#snippet right({ player, isLast })}
+			<BetInput
+				bind:value={() => state.round.bets[player.id], (v) => state.addBet(player.id, v)}
+				max={state.round.numberOfCards}
+				invalidBet={isLast ? state.getInvalidBetForLastPlayer() : undefined}
+				disabled={isLast && !state.allPlayersExceptLastHaveBet()}
+			/>
+		{/snippet}
+	</PlayersTable>
 
 	{#snippet footer()}
 		<Button

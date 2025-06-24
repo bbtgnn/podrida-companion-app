@@ -1,4 +1,4 @@
-import z from 'zod';
+import z from 'zod/v4';
 import { Game, GameSchema } from './game.svelte';
 import {
 	AppStates,

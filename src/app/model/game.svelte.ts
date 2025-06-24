@@ -1,13 +1,13 @@
-import z from 'zod';
+import { z } from 'zod/v4';
 import { Round, RoundSchema } from './round.svelte';
-import type { PlayerID } from './types';
+import { PlayerSchema, type Player, type PlayerID } from './types';
 import { nanoid } from 'nanoid';
 
 //
 
 export const GameSchema = z.object({
 	id: z.string(),
-	players: z.array(z.string()),
+	players: z.array(PlayerSchema),
 	rounds: z.array(RoundSchema),
 	currentRound: RoundSchema.optional(),
 	nextDirection: z.enum(['forward', 'backward']),
@@ -22,7 +22,7 @@ export class Game implements GameStruct {
 	id = nanoid(21);
 	isOver = $state(false);
 
-	players = $state<string[]>([]);
+	players = $state<Player[]>([]);
 	rounds = $state<Round[]>([]);
 	currentRound = $state<Round>();
 
@@ -71,6 +71,25 @@ export class Game implements GameStruct {
 			})
 			.sort((a, b) => b.points - a.points);
 	}
+
+	getPlayerById(id: PlayerID) {
+		const player = this.players.find((p) => p.id === id);
+		if (!player) throw new Error(`Unexpected: player not found ${id}`);
+		return player;
+	}
+
+	renamePlayer(id: PlayerID, newName: string) {
+		const player = this.getPlayerById(id);
+		player.name = newName;
+	}
+
+	removePlayer(playerId: string) {
+		const player = this.players.find((p) => p.id == playerId);
+		if (!player) return;
+		this.players.splice(this.players.indexOf(player), 1);
+	}
+
+	//
 
 	serialize(): GameStruct {
 		return $state.snapshot({

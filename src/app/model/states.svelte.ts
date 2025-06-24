@@ -1,6 +1,9 @@
+import { nanoid } from 'nanoid';
 import type { App } from './app.svelte';
 import { Game } from './game.svelte';
 import { Round, RoundResult } from './round.svelte';
+import { Record } from 'effect';
+import type { Player, PlayerID } from './types';
 
 // Abstract states
 
@@ -34,12 +37,20 @@ export abstract class _RoundState extends _GameState {
 	}
 
 	getPlayersOrder() {
-		const playersOrder: { name: string; id: number }[] = [];
+		const playersOrder: Player[] = [];
 		for (let i = 0; i < this.game.players.length; i++) {
-			const id = (this.round.firstPlayer + i) % this.game.players.length;
-			playersOrder.push({ name: this.game.players[id], id });
+			const index = (this.round.firstPlayer + i) % this.game.players.length;
+			const player = this.game.players.at(index);
+			if (!player) throw new Error(`Unexpected: missing player at index ${index}`);
+			playersOrder.push(player);
 		}
 		return playersOrder;
+	}
+
+	getLastPlayer() {
+		const player = this.getPlayersOrder().at(-1);
+		if (player === undefined) throw new Error('Unexpected error: no players');
+		return player;
 	}
 }
 
@@ -65,11 +76,10 @@ export class GameSetupState extends _GameState {
 	}
 
 	addPlayer(playerName: string) {
-		this.game.players.push(playerName);
-	}
-
-	removePlayer(playerIndex: number) {
-		this.game.players.splice(playerIndex, 1);
+		this.game.players.push({
+			name: playerName,
+			id: nanoid(5)
+		});
 	}
 
 	canStartGame() {
@@ -89,9 +99,35 @@ export class RoundSetupState extends _RoundState {
 		return RoundSetupState.id;
 	}
 
-	addBet(playerIndex: number, bet: number) {
-		// TODO - Add validation for bet, and for last player
-		this.round.bets[playerIndex] = bet;
+	getInvalidBetForLastPlayer() {
+		const lastPlayerId = this.getLastPlayer().id;
+		const allPlayersBetExceptForLast = Record.remove(this.round.bets, lastPlayerId) as Record<
+			string,
+			number
+		>;
+		const partialSum = Object.values(allPlayersBetExceptForLast).reduce(
+			(prev, curr) => prev + curr,
+			0
+		);
+		return this.round.numberOfCards - partialSum;
+	}
+
+	allPlayersExceptLastHaveBet() {
+		const playersExceptLast = this.getPlayersOrder()
+			.slice(0, -1)
+			.map((p) => p.id);
+		const playersWithBets = Object.keys(this.round.bets);
+		return playersExceptLast.every((id) => playersWithBets.includes(id));
+	}
+
+	addBet(playerId: PlayerID, bet: number) {
+		const lastPlayerId = this.getLastPlayer().id;
+		if (playerId === lastPlayerId && bet === this.getInvalidBetForLastPlayer()) return;
+		this.round.bets[playerId] = bet;
+
+		if (playerId != lastPlayerId && lastPlayerId in this.round.bets) {
+			this.round.bets = Record.remove(this.round.bets, lastPlayerId);
+		}
 	}
 
 	canStartRound() {
@@ -121,12 +157,12 @@ export class RoundEndedState extends _RoundState {
 		return RoundEndedState.id;
 	}
 
-	getPlayerResult(playerIndex: number) {
-		return this.round.results[playerIndex] ?? null;
+	getPlayerResult(playerId: PlayerID) {
+		return this.round.results[playerId] ?? null;
 	}
 
-	registerResult(playerIndex: number, result: RoundResult) {
-		this.round.results[playerIndex] = result;
+	registerResult(playerId: PlayerID, result: RoundResult) {
+		this.round.results[playerId] = result;
 	}
 
 	canSubmitResults() {
